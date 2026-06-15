@@ -1,0 +1,2238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Anteiku — A quiet café in the 20th Ward of Tokyo. Coffee, warmth, and shelter from the rain. Open every night until the last guest leaves." />
+  <meta name="theme-color" content="#0e0b07" />
+  <title>Anteiku Café — 20th Ward, Tokyo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    /* ============================================================
+       CUSTOM PROPERTIES
+    ============================================================ */
+    :root {
+      /* ── three layers of darkness ── */
+      --bg-primary:       #0e0b07;   /* ground black — roasted bean */
+      --bg-secondary:     #1a1006;   /* shadow brown — hovering surfaces */
+      --bg-card:          #1a1006;   /* same depth as secondary */
+      --bg-surface:       #2a1c0a;   /* bark — elevated surfaces */
+
+      /* ── one source of warmth ── */
+      --amber-bright:     #b8863a;   /* amber gold — the only light */
+      --amber-dim:        #8a5c1e;   /* burnt sienna — secondary accents */
+      --amber-faint:      #3d1f08;   /* deep ember */
+      --amber-glow:       rgba(184, 134, 58, 0.10);
+      --amber-glow-mid:   rgba(184, 134, 58, 0.20);
+
+      /* ── text ── */
+      --text-heading:     #b8863a;
+      --text-body:        #6b4c2a;   /* warm sepia mid-tone */
+      --text-muted:       #3e2a14;   /* deep sepia */
+      --text-dim:         #251709;   /* near-invisible */
+
+      /* ── borders — bark-based ── */
+      --border-subtle:    rgba(42, 28, 10, 0.9);   /* solid bark line */
+      --border-mid:       rgba(138, 92, 30, 0.25); /* amber-tinted */
+
+      --font-display:     'Playfair Display', Georgia, serif;
+      --font-body:        'Inter', system-ui, sans-serif;
+
+      --transition-smooth: 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      --transition-fast:   0.2s ease;
+
+      --radius-sm:  4px;
+      --radius-md:  8px;
+      --radius-lg:  16px;
+
+      --max-width:  1140px;
+      --nav-height: 72px;
+    }
+
+    /* ============================================================
+       RESET
+    ============================================================ */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      font-size: 16px;
+    }
+
+    body {
+      background-color: var(--bg-primary);
+      color: var(--text-body);
+      font-family: var(--font-body);
+      font-weight: 400;
+      line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    img {
+      display: block;
+      max-width: 100%;
+    }
+
+    ul, ol {
+      list-style: none;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    button {
+      cursor: pointer;
+      border: none;
+      background: none;
+      font-family: inherit;
+    }
+
+    /* ============================================================
+       SCROLLBAR — native hidden, replaced with amber progress bar
+    ============================================================ */
+    html { scrollbar-width: none; }
+    ::-webkit-scrollbar { display: none; }
+
+    .scroll-progress {
+      position: fixed;
+      top: 0;
+      right: 0;
+      width: 2px;
+      height: 100vh;
+      z-index: 998;
+      pointer-events: none;
+      background: rgba(26, 16, 6, 0.55);
+    }
+
+    .scroll-fill {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 0%;
+      background: linear-gradient(to bottom, #b8863a, #8a5c1e 85%);
+      box-shadow: 0 0 6px rgba(184, 134, 58, 0.45);
+      transition: height 0.08s linear;
+    }
+
+    .scroll-dot {
+      position: absolute;
+      bottom: -4px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #b8863a;
+      animation: dotPulse 2.4s ease-in-out infinite;
+    }
+
+    /* ============================================================
+       LAYOUT UTILITIES
+    ============================================================ */
+    .container {
+      width: 100%;
+      max-width: var(--max-width);
+      margin: 0 auto;
+      padding: 0 2rem;
+    }
+
+    .section {
+      padding: 7rem 0;
+    }
+
+    .section-label {
+      font-family: var(--font-body);
+      font-size: 0.68rem;
+      font-weight: 500;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--amber-dim);
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1.2rem;
+    }
+
+    .section-label::before {
+      content: '';
+      display: block;
+      width: 2rem;
+      height: 1px;
+      background: var(--amber-dim);
+      flex-shrink: 0;
+    }
+
+    .section-title {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 4vw, 3.2rem);
+      font-weight: 600;
+      color: var(--text-heading);
+      line-height: 1.2;
+      margin-bottom: 1.5rem;
+    }
+
+    .section-body {
+      font-size: 1rem;
+      color: var(--text-body);
+      line-height: 1.85;
+      max-width: 52ch;
+    }
+
+    /* ============================================================
+       GRAIN OVERLAY
+    ============================================================ */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 9999;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      opacity: 0.35;
+    }
+
+    /* ============================================================
+       NAVIGATION
+    ============================================================ */
+    .nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      height: var(--nav-height);
+      display: flex;
+      align-items: center;
+      transition: background var(--transition-smooth), backdrop-filter var(--transition-smooth);
+    }
+
+    .nav.scrolled {
+      background: rgba(14, 11, 7, 0.92);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(42, 28, 10, 1);
+    }
+
+    .nav .container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .nav-logo {
+      display: flex;
+      flex-direction: column;
+      gap: 0.1rem;
+    }
+
+    .nav-logo-main {
+      font-family: var(--font-display);
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: var(--text-heading);
+      letter-spacing: 0.04em;
+      line-height: 1;
+    }
+
+    .nav-logo-sub {
+      font-size: 0.58rem;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--amber-dim);
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 2.5rem;
+    }
+
+    .nav-links a {
+      font-size: 0.78rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      transition: color var(--transition-fast);
+      position: relative;
+    }
+
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -4px;
+      left: 0;
+      width: 0;
+      height: 1px;
+      background: var(--amber-bright);
+      transition: width var(--transition-smooth);
+    }
+
+    .nav-links a:hover {
+      color: var(--text-heading);
+    }
+
+    .nav-links a:hover::after {
+      width: 100%;
+    }
+
+    .nav-cta {
+      font-size: 0.72rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--amber-bright) !important;
+      border: 1px solid var(--border-mid);
+      padding: 0.5rem 1.2rem;
+      border-radius: var(--radius-sm);
+      transition: background var(--transition-fast), border-color var(--transition-fast) !important;
+    }
+
+    .nav-cta:hover {
+      background: var(--amber-glow) !important;
+      border-color: var(--amber-bright) !important;
+    }
+
+    .nav-cta::after {
+      display: none !important;
+    }
+
+    .nav-toggle {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      padding: 4px;
+    }
+
+    .nav-toggle span {
+      display: block;
+      width: 22px;
+      height: 1px;
+      background: var(--amber-dim);
+      transition: var(--transition-smooth);
+    }
+
+    /* ============================================================
+       HERO
+    ============================================================ */
+    .hero {
+      position: relative;
+      height: 100vh;
+      min-height: 600px;
+      display: flex;
+      align-items: center;
+      overflow: hidden;
+    }
+
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      background-image: url('images/hero.png');
+      background-size: cover;
+      background-position: center;
+      filter: brightness(0.42) saturate(0.65);
+      transform: scale(1.05);
+      transition: transform 8s ease;
+    }
+
+    .hero:hover .hero-bg {
+      transform: scale(1.0);
+    }
+
+    /* ── candle glow: concentric dark ellipses, warm center ── */
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      /* main edge-to-center fade */
+      background:
+        linear-gradient(to top,  #0e0b07 0%,  transparent 38%),
+        linear-gradient(to right, rgba(14,11,7,0.78) 0%, transparent 55%);
+    }
+
+    /* Candle glow — three soft rings, much lighter touch */
+    .hero-candle-glow {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      background:
+        radial-gradient(ellipse 55% 44% at 62% 46%, rgba(14,11,7,0.0)   0%, rgba(14,11,7,0.0)  100%),
+        radial-gradient(ellipse 82% 66% at 62% 46%, rgba(14,11,7,0.22)  0%, rgba(14,11,7,0.0)  100%),
+        radial-gradient(ellipse 110% 94% at 62% 46%, rgba(14,11,7,0.52) 0%, rgba(14,11,7,0.0)  100%);
+    }
+
+    /* ── steam wisps — dialed back ── */
+    .hero-steam {
+      position: absolute;
+      bottom: 38%;
+      left: 58%;
+      width: 180px;
+      height: 260px;
+      pointer-events: none;
+      z-index: 1;
+      opacity: 0;
+      animation: fadeIn 1s 1.8s forwards;
+    }
+
+    .wisp {
+      position: absolute;
+      bottom: 0;
+      width: 2px;
+      border-radius: 50%;
+      background: linear-gradient(
+        to top,
+        rgba(138, 92, 30, 0.10),
+        rgba(184, 134, 58, 0.04) 40%,
+        transparent 100%
+      );
+      transform-origin: bottom center;
+      filter: blur(3px);
+    }
+
+    .wisp-1 { left: 30px;  height: 120px; width: 3px; animation: wispRise 4.2s 2s   ease-in-out infinite; }
+    .wisp-2 { left: 58px;  height: 90px;  width: 2px; animation: wispRise 5.1s 2.6s ease-in-out infinite; }
+    .wisp-3 { left: 82px;  height: 140px; width: 4px; animation: wispRise 3.8s 1.4s ease-in-out infinite; }
+    .wisp-4 { left: 110px; height: 80px;  width: 2px; animation: wispRise 4.7s 3.1s ease-in-out infinite; }
+    .wisp-5 { left: 140px; height: 110px; width: 3px; animation: wispRise 5.5s 0.8s ease-in-out infinite; }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      max-width: 680px;
+    }
+
+    .hero-ward {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-size: 0.68rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--amber-dim);
+      margin-bottom: 2rem;
+      opacity: 0;
+      animation: fadeUp 0.8s 0.2s forwards;
+    }
+
+    .hero-ward::before,
+    .hero-ward::after {
+      content: '';
+      display: block;
+      width: 1.5rem;
+      height: 1px;
+      background: var(--amber-dim);
+    }
+
+    .hero-title {
+      font-family: var(--font-display);
+      font-size: clamp(3.5rem, 8vw, 7rem);
+      font-weight: 700;
+      color: var(--text-heading);
+      line-height: 0.95;
+      letter-spacing: -0.01em;
+      margin-bottom: 1rem;
+      opacity: 0;
+      animation: fadeUp 0.9s 0.4s forwards;
+    }
+
+    .hero-title em {
+      font-style: italic;
+      font-weight: 400;
+      color: var(--amber-dim);
+      display: block;
+      font-size: 0.58em;
+      letter-spacing: 0.06em;
+      line-height: 1.6;
+    }
+
+    .hero-desc {
+      font-size: 1.05rem;
+      color: var(--text-body);
+      line-height: 1.8;
+      max-width: 44ch;
+      margin-bottom: 2.5rem;
+      opacity: 0;
+      animation: fadeUp 0.9s 0.6s forwards;
+    }
+
+    .hero-actions {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+      opacity: 0;
+      animation: fadeUp 0.9s 0.8s forwards;
+    }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      background: var(--amber-bright);
+      color: var(--bg-primary);
+      font-family: var(--font-body);
+      font-size: 0.78rem;
+      font-weight: 500;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      padding: 0.9rem 2rem;
+      border-radius: var(--radius-sm);
+      transition: var(--transition-smooth);
+      box-shadow: 0 0 30px rgba(184, 134, 58, 0.18);
+    }
+
+    .btn-primary:hover {
+      background: #c9973f;
+      box-shadow: 0 0 48px rgba(184, 134, 58, 0.32);
+      transform: translateY(-2px);
+    }
+
+    .btn-ghost {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-size: 0.78rem;
+      font-weight: 400;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--border-subtle);
+      padding-bottom: 2px;
+      transition: color var(--transition-fast), border-color var(--transition-fast);
+    }
+
+    .btn-ghost:hover {
+      color: var(--text-heading);
+      border-color: var(--amber-bright);
+    }
+
+    .hero-scroll {
+      position: absolute;
+      bottom: 2.5rem;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      z-index: 1;
+      opacity: 0;
+      animation: fadeIn 1s 1.4s forwards;
+    }
+
+    .hero-scroll span {
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+    }
+
+    .scroll-line {
+      width: 1px;
+      height: 48px;
+      background: linear-gradient(to bottom, var(--amber-dim), transparent);
+      animation: scrollPulse 2s ease-in-out infinite;
+    }
+
+    /* ============================================================
+       ABOUT
+    ============================================================ */
+    .about {
+      background: var(--bg-secondary);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .about::before {
+      content: 'ANTEIKU';
+      position: absolute;
+      top: 50%;
+      right: -4rem;
+      transform: translateY(-50%);
+      font-family: var(--font-display);
+      font-size: clamp(6rem, 14vw, 14rem);
+      font-weight: 700;
+      color: transparent;
+      -webkit-text-stroke: 1px var(--text-dim);
+      letter-spacing: 0.05em;
+      pointer-events: none;
+      user-select: none;
+      opacity: 0.4;
+      line-height: 1;
+    }
+
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6rem;
+      align-items: center;
+    }
+
+    .about-image-wrap {
+      position: relative;
+    }
+
+    .about-image-wrap::before {
+      content: '';
+      position: absolute;
+      inset: -1px;
+      border: 1px solid var(--border-mid);
+      border-radius: var(--radius-md);
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    .about-image-wrap::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to bottom, transparent 50%, var(--bg-secondary) 100%);
+      border-radius: var(--radius-md);
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    .about-img {
+      width: 100%;
+      height: 520px;
+      object-fit: cover;
+      border-radius: var(--radius-md);
+      filter: saturate(0.65) brightness(0.72);
+    }
+
+    .about-badge {
+      position: absolute;
+      bottom: 2rem;
+      left: 2rem;
+      z-index: 3;
+      background: rgba(14, 11, 7, 0.85);
+      border: 1px solid var(--border-mid);
+      border-radius: var(--radius-md);
+      padding: 1rem 1.4rem;
+      backdrop-filter: blur(12px);
+    }
+
+    .about-badge-num {
+      font-family: var(--font-display);
+      font-size: 2.2rem;
+      font-weight: 700;
+      color: var(--text-heading);
+      line-height: 1;
+    }
+
+    .about-badge-label {
+      font-size: 0.68rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--amber-dim);
+      margin-top: 0.25rem;
+    }
+
+    .about-content {
+      position: relative;
+      z-index: 1;
+    }
+
+    .about-quote {
+      border-left: 2px solid var(--amber-dim);
+      padding-left: 1.5rem;
+      margin: 2rem 0;
+    }
+
+    .about-quote p {
+      font-family: var(--font-display);
+      font-style: italic;
+      font-size: 1.15rem;
+      color: var(--text-muted);
+      line-height: 1.7;
+    }
+
+    .about-quote cite {
+      display: block;
+      font-style: normal;
+      font-size: 0.72rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--amber-dim);
+      margin-top: 0.75rem;
+    }
+
+    /* ============================================================
+       MENU
+    ============================================================ */
+    .menu {
+      background: var(--bg-primary);
+    }
+
+    .menu-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin-bottom: 4rem;
+      flex-wrap: wrap;
+      gap: 2rem;
+    }
+
+    .menu-tabs {
+      display: flex;
+      gap: 0;
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+    }
+
+    .menu-tab {
+      font-size: 0.72rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      padding: 0.6rem 1.4rem;
+      background: transparent;
+      font-family: var(--font-body);
+      border-right: 1px solid var(--border-subtle);
+      transition: var(--transition-fast);
+    }
+
+    .menu-tab:last-child {
+      border-right: none;
+    }
+
+    .menu-tab.active,
+    .menu-tab:hover {
+      background: var(--amber-glow);
+      color: var(--text-heading);
+    }
+
+    /* ── Menu list layout ── */
+    .menu-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      border: 1px solid rgba(42, 28, 10, 0.8);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+    }
+
+    .menu-subcategory {
+      border-bottom: 1px solid rgba(42, 28, 10, 0.8);
+    }
+
+    .menu-subcategory:last-child {
+      border-bottom: none;
+    }
+
+    .menu-subcat-header {
+      padding: 0.7rem 2rem;
+      background: var(--bg-surface);
+      border-bottom: 1px solid rgba(42, 28, 10, 0.8);
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .menu-subcat-label {
+      font-size: 0.6rem;
+      font-weight: 500;
+      letter-spacing: 0.26em;
+      text-transform: uppercase;
+      color: var(--amber-dim);
+    }
+
+    .menu-subcat-rule {
+      flex: 1;
+      height: 1px;
+      background: rgba(42, 28, 10, 0.8);
+    }
+
+    .menu-entries {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .menu-entry {
+      padding: 1.4rem 2rem;
+      background: var(--bg-card);
+      border-right: 1px solid rgba(42, 28, 10, 0.6);
+      border-bottom: 1px solid rgba(42, 28, 10, 0.4);
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+      transition: background var(--transition-fast);
+    }
+
+    .menu-entry:nth-child(even) {
+      border-right: none;
+    }
+
+    .menu-entry:hover {
+      background: var(--bg-surface);
+    }
+
+    .menu-entry-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 1rem;
+    }
+
+    .menu-entry-name {
+      font-family: var(--font-display);
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text-heading);
+      line-height: 1.3;
+    }
+
+    .menu-entry-price {
+      font-family: var(--font-display);
+      font-size: 0.95rem;
+      font-weight: 400;
+      color: var(--amber-dim);
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .menu-entry-desc {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      line-height: 1.65;
+    }
+
+    .menu-entry-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-size: 0.58rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--amber-dim);
+      margin-top: 0.2rem;
+    }
+
+    .menu-entry-badge::before {
+      content: '';
+      display: block;
+      width: 12px;
+      height: 1px;
+      background: var(--amber-dim);
+    }
+
+    .menu-note {
+      padding: 1.2rem 2rem;
+      background: var(--bg-primary);
+      border-top: 1px solid rgba(42, 28, 10, 0.8);
+      font-family: var(--font-display);
+      font-style: italic;
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      text-align: center;
+      line-height: 1.7;
+    }
+
+    /* ============================================================
+       ATMOSPHERE
+    ============================================================ */
+    .atmosphere {
+      background: var(--bg-secondary);
+      position: relative;
+    }
+
+    .atmosphere-inner {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 5rem;
+      align-items: center;
+    }
+
+    .atmosphere-pillars {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin-top: 2.5rem;
+    }
+
+    .pillar {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 1.5rem;
+      transition: border-color var(--transition-fast), background var(--transition-fast);
+    }
+
+    .pillar:hover {
+      border-color: var(--amber-dim);
+      background: var(--bg-surface);
+    }
+
+    .pillar-icon {
+      font-size: 1.4rem;
+      margin-bottom: 0.75rem;
+      display: block;
+    }
+
+    .pillar-title {
+      font-family: var(--font-display);
+      font-size: 0.98rem;
+      font-weight: 600;
+      color: var(--text-heading);
+      margin-bottom: 0.4rem;
+    }
+
+    .pillar-text {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      line-height: 1.65;
+    }
+
+    .atmosphere-visual {
+      position: relative;
+    }
+
+    .atm-img-stack {
+      position: relative;
+      height: 580px;
+    }
+
+    .atm-img-main {
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 85%;
+      height: 480px;
+      object-fit: cover;
+      border-radius: var(--radius-lg);
+      filter: saturate(0.6) brightness(0.7);
+      border: 1px solid var(--border-mid);
+    }
+
+    .atm-img-accent {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 55%;
+      height: 260px;
+      object-fit: cover;
+      border-radius: var(--radius-md);
+      filter: saturate(0.7) brightness(0.75);
+      border: 1px solid var(--border-mid);
+      box-shadow: 0 0 60px rgba(14,11,7,0.9);
+    }
+
+    .atm-hours-card {
+      position: absolute;
+      bottom: 6rem;
+      right: -1rem;
+      background: rgba(18, 14, 9, 0.92);
+      border: 1px solid var(--border-mid);
+      border-radius: var(--radius-md);
+      padding: 1.25rem 1.5rem;
+      backdrop-filter: blur(16px);
+      min-width: 180px;
+      z-index: 3;
+    }
+
+    .atm-hours-card-title {
+      font-size: 0.62rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--amber-dim);
+      margin-bottom: 0.75rem;
+    }
+
+    .hours-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 1.5rem;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      padding: 0.3rem 0;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .hours-row:last-child {
+      border-bottom: none;
+    }
+
+    .hours-row strong {
+      color: var(--text-body);
+      font-weight: 400;
+    }
+
+    /* ============================================================
+       TESTIMONIALS
+    ============================================================ */
+    .testimonials {
+      background: var(--bg-primary);
+      overflow: hidden;
+    }
+
+    .testimonials-header {
+      text-align: center;
+      margin-bottom: 4rem;
+    }
+
+    .testimonials-header .section-label {
+      justify-content: center;
+    }
+
+    .testimonials-header .section-label::before {
+      display: none;
+    }
+
+    .testimonials-track-wrap {
+      overflow: hidden;
+      -webkit-mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
+      mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
+    }
+
+    .testimonials-track {
+      display: flex;
+      gap: 1.5rem;
+      animation: marquee 40s linear infinite;
+      width: max-content;
+    }
+
+    .testimonials-track:hover {
+      animation-play-state: paused;
+    }
+
+    .testimonial-card {
+      flex-shrink: 0;
+      width: 340px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 2rem;
+      transition: border-color var(--transition-fast);
+    }
+
+    .testimonial-card:hover {
+      border-color: var(--amber-dim);
+    }
+
+    .testimonial-stars {
+      display: flex;
+      gap: 4px;
+      margin-bottom: 1rem;
+    }
+
+    .testimonial-stars span {
+      color: var(--amber-bright);
+      font-size: 0.9rem;
+    }
+
+    .testimonial-text {
+      font-family: var(--font-display);
+      font-style: italic;
+      font-size: 0.98rem;
+      color: var(--text-body);
+      line-height: 1.7;
+      margin-bottom: 1.25rem;
+    }
+
+    .testimonial-author {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .testimonial-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--amber-faint);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-display);
+      font-size: 0.9rem;
+      color: var(--amber-bright);
+      flex-shrink: 0;
+      border: 1px solid var(--border-mid);
+    }
+
+    .testimonial-name {
+      font-size: 0.82rem;
+      color: var(--text-body);
+    }
+
+    .testimonial-loc {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+    }
+
+    /* ============================================================
+       NEWSLETTER / VISIT CTA
+    ============================================================ */
+    .cta-section {
+      background: var(--bg-secondary);
+      border-top: 1px solid var(--border-subtle);
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .cta-inner {
+      text-align: center;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .cta-inner .section-label {
+      justify-content: center;
+    }
+
+    .cta-inner .section-label::before {
+      display: none;
+    }
+
+    .cta-inner .section-body {
+      max-width: none;
+      margin: 0 auto 2.5rem;
+    }
+
+    .cta-form {
+      display: flex;
+      gap: 0;
+      border: 1px solid var(--border-mid);
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+      max-width: 420px;
+      margin: 0 auto;
+    }
+
+    .cta-form input {
+      flex: 1;
+      background: var(--bg-card);
+      border: none;
+      outline: none;
+      padding: 0.85rem 1.25rem;
+      font-family: var(--font-body);
+      font-size: 0.88rem;
+      color: var(--text-body);
+      caret-color: var(--amber-bright);
+    }
+
+    .cta-form input::placeholder {
+      color: var(--text-dim);
+    }
+
+    .cta-form button {
+      background: var(--amber-bright);
+      color: var(--bg-primary);
+      font-family: var(--font-body);
+      font-size: 0.72rem;
+      font-weight: 500;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      padding: 0.85rem 1.5rem;
+      transition: background var(--transition-fast);
+    }
+
+    .cta-form button:hover {
+      background: #c9973f;
+    }
+
+    /* ============================================================
+       FOOTER
+    ============================================================ */
+    footer {
+      background: var(--bg-primary);
+      padding: 4rem 0 2rem;
+    }
+
+    .footer-top {
+      display: grid;
+      grid-template-columns: 1.8fr 1fr 1fr;
+      gap: 4rem;
+      padding-bottom: 3rem;
+      border-bottom: 1px solid var(--border-subtle);
+      margin-bottom: 2rem;
+    }
+
+    .footer-brand-name {
+      font-family: var(--font-display);
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--text-heading);
+      margin-bottom: 0.3rem;
+    }
+
+    .footer-brand-sub {
+      font-size: 0.65rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--amber-dim);
+      margin-bottom: 1.25rem;
+    }
+
+    .footer-brand-desc {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      line-height: 1.75;
+      max-width: 36ch;
+    }
+
+    .footer-col-title {
+      font-size: 0.65rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--amber-dim);
+      margin-bottom: 1.25rem;
+    }
+
+    .footer-links li {
+      margin-bottom: 0.65rem;
+    }
+
+    .footer-links a {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      transition: color var(--transition-fast);
+    }
+
+    .footer-links a:hover {
+      color: var(--text-body);
+    }
+
+    .footer-address {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      line-height: 2;
+    }
+
+    .footer-address strong {
+      color: var(--text-body);
+      font-weight: 400;
+    }
+
+    .footer-bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .footer-copy {
+      font-size: 0.75rem;
+      color: var(--text-dim);
+    }
+
+    .footer-legal {
+      display: flex;
+      gap: 1.5rem;
+    }
+
+    .footer-legal a {
+      font-size: 0.75rem;
+      color: var(--text-dim);
+      transition: color var(--transition-fast);
+    }
+
+    .footer-legal a:hover {
+      color: var(--text-muted);
+    }
+
+    /* ============================================================
+       MOBILE NAV DRAWER
+    ============================================================ */
+    .mobile-nav {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 999;
+      background: rgba(10, 8, 4, 0.98);
+      backdrop-filter: blur(24px);
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2.5rem;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity var(--transition-smooth);
+    }
+
+    .mobile-nav.open {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .mobile-nav a {
+      font-family: var(--font-display);
+      font-size: 2rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      letter-spacing: 0.04em;
+      transition: color var(--transition-fast);
+    }
+
+    .mobile-nav a:hover {
+      color: var(--text-heading);
+    }
+
+    .mobile-close {
+      position: absolute;
+      top: 1.5rem;
+      right: 2rem;
+      font-size: 1.4rem;
+      color: var(--amber-dim);
+      background: none;
+      border: none;
+      cursor: pointer;
+    }
+
+    /* ============================================================
+       REVEAL ANIMATIONS
+    ============================================================ */
+    .reveal {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ============================================================
+       KEYFRAMES
+    ============================================================ */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+
+    @keyframes scrollPulse {
+      0%, 100% { opacity: 0.3; transform: scaleY(1); }
+      50%       { opacity: 1;   transform: scaleY(1.15); }
+    }
+
+    @keyframes marquee {
+      from { transform: translateX(0); }
+      to   { transform: translateX(-50%); }
+    }
+
+    @keyframes wispRise {
+      0%   { transform: translateY(0)   translateX(0)    scaleX(1);   opacity: 0;    }
+      8%   { opacity: 1; }
+      40%  { transform: translateY(-55px) translateX(6px)  scaleX(1.4); opacity: 0.7; }
+      70%  { transform: translateY(-110px) translateX(-4px) scaleX(0.8); opacity: 0.4; }
+      100% { transform: translateY(-180px) translateX(2px)  scaleX(0.3); opacity: 0;   }
+    }
+
+    @keyframes dotPulse {
+      0%, 100% {
+        box-shadow: 0 0 5px rgba(184,134,58,0.55), 0 0 10px rgba(184,134,58,0.25);
+        transform: translateX(-50%) scale(1);
+      }
+      50% {
+        box-shadow: 0 0 12px rgba(184,134,58,0.9), 0 0 22px rgba(184,134,58,0.5);
+        transform: translateX(-50%) scale(1.35);
+      }
+    }
+
+    /* ============================================================
+       KANEKI HOMAGE — bottom-right corner
+    ============================================================ */
+    .kaneki-homage {
+      position: fixed;
+      bottom: -26px;
+      right: -14px;
+      z-index: 500;
+      opacity: 0.17;
+      transform: rotate(6deg);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+      cursor: default;
+    }
+
+    .kaneki-homage:hover {
+      opacity: 0.36;
+      transform: rotate(3deg) translateY(-4px);
+    }
+
+    /* ============================================================
+       FOOTER PHONE LINK
+    ============================================================ */
+    .footer-phone {
+      color: var(--text-muted);
+      text-decoration: none;
+      border-bottom: 1px solid transparent;
+      padding-bottom: 1px;
+      transition: color var(--transition-fast), border-color var(--transition-fast);
+    }
+
+    .footer-phone:hover {
+      color: var(--amber-bright);
+      border-bottom-color: var(--amber-dim);
+    }
+
+    /* ============================================================
+       RESPONSIVE
+    ============================================================ */
+    @media (max-width: 1024px) {
+      .about-grid { grid-template-columns: 1fr; gap: 3rem; }
+      .about-img { height: 340px; }
+      .about::before { display: none; }
+      .atmosphere-inner { grid-template-columns: 1fr; gap: 4rem; }
+      .atm-img-stack { height: 400px; }
+      .atm-img-main { width: 90%; height: 360px; }
+      .atm-img-accent { display: none; }
+      .atm-hours-card { right: 0; bottom: 1rem; }
+      .footer-top { grid-template-columns: 1fr 1fr; }
+    }
+
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
+      .nav-toggle { display: flex; }
+      .mobile-nav { display: flex; }
+      .menu-entries { grid-template-columns: 1fr; }
+      .footer-top { grid-template-columns: 1fr; gap: 2.5rem; }
+      .atmosphere-pillars { grid-template-columns: 1fr; }
+      .section { padding: 5rem 0; }
+      .hero-title { font-size: clamp(3rem, 12vw, 5rem); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Scroll progress indicator -->
+  <div class="scroll-progress" aria-hidden="true">
+    <div class="scroll-fill" id="scrollFill">
+      <div class="scroll-dot"></div>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       NAVIGATION
+  ============================================================ -->
+  <nav class="nav" id="nav" aria-label="Main navigation">
+    <div class="container">
+      <a href="#" class="nav-logo" aria-label="Anteiku home">
+        <span class="nav-logo-main">安定区</span>
+        <span class="nav-logo-sub">Anteiku · Tokyo</span>
+      </a>
+      <ul class="nav-links" role="list">
+        <li><a href="#about">Our Story</a></li>
+        <li><a href="#menu">Menu</a></li>
+        <li><a href="#atmosphere">Atmosphere</a></li>
+        <li><a href="#visit" class="nav-cta">Visit Us</a></li>
+      </ul>
+      <button class="nav-toggle" id="navToggle" aria-label="Open navigation" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Mobile nav overlay -->
+  <div class="mobile-nav" id="mobileNav" role="dialog" aria-modal="true" aria-label="Mobile navigation">
+    <button class="mobile-close" id="mobileClose" aria-label="Close navigation">✕</button>
+    <a href="#about" class="mobile-nav-link">Our Story</a>
+    <a href="#menu" class="mobile-nav-link">Menu</a>
+    <a href="#atmosphere" class="mobile-nav-link">Atmosphere</a>
+    <a href="#visit" class="mobile-nav-link">Visit Us</a>
+  </div>
+
+  <!-- ============================================================
+       HERO
+  ============================================================ -->
+  <section class="hero" id="hero" aria-label="Hero">
+    <div class="hero-bg" aria-hidden="true"></div>
+    <div class="hero-overlay" aria-hidden="true"></div>
+    <div class="hero-candle-glow" aria-hidden="true"></div>
+    <!-- steam wisps floating above the unseen coffee cup -->
+    <div class="hero-steam" aria-hidden="true">
+      <div class="wisp wisp-1"></div>
+      <div class="wisp wisp-2"></div>
+      <div class="wisp wisp-3"></div>
+      <div class="wisp wisp-4"></div>
+      <div class="wisp wisp-5"></div>
+    </div>
+    <div class="container">
+      <div class="hero-content">
+        <div class="hero-ward" aria-label="Location">
+          <span></span>20th Ward · Nishiki<span></span>
+        </div>
+        <h1 class="hero-title">
+          Anteiku
+          <em>Where darkness finds its warmth</em>
+        </h1>
+        <p class="hero-desc">
+          A quiet café nestled in the winding lanes of Tokyo's 20th Ward. We brew our coffee slowly, speak softly, and keep the lights low. Come as you are. Stay as long as you need.
+        </p>
+        <div class="hero-actions">
+          <a href="#menu" class="btn-primary" id="heroMenuBtn">
+            Explore the Menu
+            <span aria-hidden="true">→</span>
+          </a>
+          <a href="#about" class="btn-ghost" id="heroAboutBtn">Our story</a>
+        </div>
+      </div>
+    </div>
+    <div class="hero-scroll" aria-hidden="true">
+      <div class="scroll-line"></div>
+      <span>Scroll</span>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       ABOUT
+  ============================================================ -->
+  <section class="about section" id="about" aria-labelledby="about-title">
+    <div class="container">
+      <div class="about-grid">
+        <div class="about-image-wrap reveal">
+          <img src="images/hero.png" alt="The warm interior of Anteiku café at dusk" class="about-img" loading="lazy" />
+          <div class="about-badge" aria-label="Established 2007">
+            <div class="about-badge-num">2007</div>
+            <div class="about-badge-label">Est. — 20th Ward</div>
+          </div>
+        </div>
+        <div class="about-content reveal">
+          <p class="section-label">Our Story</p>
+          <h2 class="section-title" id="about-title">A refuge in the rain</h2>
+          <p class="section-body">
+            Anteiku was not built to be found easily. It was built for those who already know the kind of quiet they are looking for. Our manager, Yoshimura-san, opened these doors with one belief: that every soul, however burdened, deserves a warm cup of coffee and a place to sit without judgment.
+          </p>
+          <blockquote class="about-quote">
+            <p>"The coffee here does not just wake you. It reminds you that morning is still possible, even after the longest night."</p>
+            <cite>— Yoshimura Kuzen, Founder</cite>
+          </blockquote>
+          <p class="section-body">
+            We source single-origin beans from the highlands of Ethiopia and the volcanic slopes of Sumatra, roasted in-house each morning. Everything on our menu is made by hand, with patience. We do not rush here.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       MENU
+  ============================================================ -->
+  <section class="menu section" id="menu" aria-labelledby="menu-title">
+    <div class="container">
+      <div class="menu-header">
+        <div>
+          <p class="section-label">The Menu</p>
+          <h2 class="section-title" id="menu-title">Crafted in silence</h2>
+        </div>
+        <div class="menu-tabs" role="tablist" aria-label="Menu categories">
+          <button class="menu-tab active" role="tab" aria-selected="true" id="tab-coffee" data-tab="coffee">Coffee</button>
+          <button class="menu-tab" role="tab" aria-selected="false" id="tab-food" data-tab="food">Kitchen</button>
+          <button class="menu-tab" role="tab" aria-selected="false" id="tab-spirits" data-tab="spirits">Spirits</button>
+          <button class="menu-tab" role="tab" aria-selected="false" id="tab-tonight" data-tab="tonight">Tonight</button>
+        </div>
+      </div>
+      <div class="menu-grid reveal" id="menuGrid">
+        <!-- Items injected by JS -->
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       ATMOSPHERE
+  ============================================================ -->
+  <section class="atmosphere section" id="atmosphere" aria-labelledby="atm-title">
+    <div class="container">
+      <div class="atmosphere-inner">
+        <div>
+          <p class="section-label">The Space</p>
+          <h2 class="section-title" id="atm-title">Light lives only at the edges here</h2>
+          <p class="section-body">
+            Every corner of Anteiku was designed to let you disappear. The walls hold old music. The candles never burn past midnight. The bookshelves along the back wall are for reading, never selling. If you find a book you love, leave one behind.
+          </p>
+          <div class="atmosphere-pillars reveal">
+            <article class="pillar">
+              <span class="pillar-icon" aria-hidden="true">♨</span>
+              <h3 class="pillar-title">Pour-Over Bar</h3>
+              <p class="pillar-text">Slow, deliberate, and made entirely to your preference. Strength, temperature, bloom time — all yours to decide.</p>
+            </article>
+            <article class="pillar">
+              <span class="pillar-icon" aria-hidden="true">🕯</span>
+              <h3 class="pillar-title">Candlelit Tables</h3>
+              <p class="pillar-text">No overhead fluorescence. Only warm beeswax candles, replaced by hand each evening at dusk.</p>
+            </article>
+            <article class="pillar">
+              <span class="pillar-icon" aria-hidden="true">📻</span>
+              <h3 class="pillar-title">Vinyl Only</h3>
+              <p class="pillar-text">Jazz, ambient, and classical. A curated stack that changes with the weather. Requests are considered but never guaranteed.</p>
+            </article>
+            <article class="pillar">
+              <span class="pillar-icon" aria-hidden="true">🌧</span>
+              <h3 class="pillar-title">Rain Room</h3>
+              <p class="pillar-text">Our window booth faces the alley. On rainy nights, it is always the first to fill. We keep it unbooked by rule.</p>
+            </article>
+          </div>
+        </div>
+        <div class="atmosphere-visual reveal">
+          <div class="atm-img-stack">
+            <img src="images/coffee.png" alt="Close-up of a hand-poured Anteiku coffee" class="atm-img-main" loading="lazy" />
+            <img src="images/pastry.png" alt="Seasonal pastry selection at Anteiku" class="atm-img-accent" loading="lazy" />
+            <div class="atm-hours-card" id="visit" aria-label="Opening hours">
+              <p class="atm-hours-card-title">Hours</p>
+              <div class="hours-row"><span>Mon – Thu</span><strong>5pm – 1am</strong></div>
+              <div class="hours-row"><span>Fri – Sat</span><strong>4pm – 3am</strong></div>
+              <div class="hours-row"><span>Sunday</span><strong>6pm – 12am</strong></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       TESTIMONIALS
+  ============================================================ -->
+  <section class="testimonials section" aria-labelledby="reviews-title">
+    <div class="container">
+      <div class="testimonials-header reveal">
+        <p class="section-label">Guest Words</p>
+        <h2 class="section-title" id="reviews-title">They came once. They never stopped coming.</h2>
+      </div>
+    </div>
+    <div class="testimonials-track-wrap" aria-label="Guest testimonials, auto-scrolling">
+      <div class="testimonials-track" id="reviewsTrack">
+        <!-- Duplicated by JS for seamless loop -->
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       NEWSLETTER
+  ============================================================ -->
+  <section class="cta-section section" aria-labelledby="cta-title">
+    <div class="container">
+      <div class="cta-inner reveal">
+        <p class="section-label">Stay Close</p>
+        <h2 class="section-title" id="cta-title">Seasonal menus. Quiet evenings. First to know.</h2>
+        <p class="section-body">We send one letter per month — the new seasonal blend, upcoming evenings, and whatever Yoshimura-san feels like writing. No noise. Just warmth.</p>
+        <form class="cta-form" id="ctaForm" aria-label="Newsletter signup">
+          <label for="emailInput" class="sr-only">Your email address</label>
+          <input
+            type="email"
+            id="emailInput"
+            name="email"
+            placeholder="your@email.com"
+            autocomplete="email"
+            required
+            aria-required="true"
+          />
+          <button type="submit" id="ctaSubmitBtn">Subscribe</button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       FOOTER
+  ============================================================ -->
+  <footer aria-label="Site footer">
+    <div class="container">
+      <div class="footer-top">
+        <div>
+          <p class="footer-brand-name">安定区</p>
+          <p class="footer-brand-sub">Anteiku Café · Since 2007</p>
+          <p class="footer-brand-desc">
+            A quiet place in the 20th Ward. We make coffee carefully, speak when spoken to, and close only when the last guest has left.
+          </p>
+          <p class="footer-brand-desc" style="margin-top:1rem; font-style:italic;">
+            Anteiku has never asked a guest what they are.
+          </p>
+        </div>
+        <nav aria-label="Footer navigation">
+          <p class="footer-col-title">Navigate</p>
+          <ul class="footer-links" role="list">
+            <li><a href="#about">Our Story</a></li>
+            <li><a href="#menu">Menu</a></li>
+            <li><a href="#atmosphere">The Space</a></li>
+            <li><a href="#visit">Hours</a></li>
+          </ul>
+        </nav>
+        <address>
+          <p class="footer-col-title">Find Us</p>
+          <div class="footer-address">
+            <strong>Anteiku</strong><br />
+            4-chōme-2-8 Nishiki<br />
+            Tōkyō-to 103-0054<br />
+            20th Ward, Japan<br /><br />
+            <strong>Phone</strong><br />
+            <a href="sms:+9647722899914?body=Hi, I found your contact through the Anteiku website and would like to get in touch." class="footer-phone" id="footerPhone">+964 772 2899 914</a><br /><br />
+            <strong>Mail</strong><br />
+            shelter@anteiku.jp
+          </div>
+        </address>
+      </div>
+      <div class="footer-bottom">
+        <p class="footer-copy">© 2007 – 2024 Anteiku. All rights reserved.</p>
+        <nav class="footer-legal" aria-label="Legal links">
+          <a href="#">Privacy</a>
+          <a href="#">Terms</a>
+          <a href="#">Accessibility</a>
+        </nav>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // ============================================================
+    //  DATA — grouped menu structure
+    // ============================================================
+    const menuData = {
+      coffee: [
+        {
+          subcat: 'Pour-Over & Drip',
+          items: [
+            {
+              name: 'Black Nocturne',
+              desc: 'Ethiopian Yirgacheffe, cold-dripped 18 hours over raw amber stone. For those who prefer their darkness transparent.',
+              price: '¥850',
+              badge: 'Signature',
+            },
+            {
+              name: 'The Long Goodbye',
+              desc: 'Chemex pour-over prepared tableside. Kenyan AA, medium-light roast. Takes fifteen minutes. Worth every second.',
+              price: '¥1,100',
+              badge: 'Pour-Over',
+            },
+            {
+              name: 'Dawn Breach',
+              desc: 'Washed Guatemalan Huehuetenango. Berry-forward, mountain-clean. It tastes like a morning you did not expect to see.',
+              price: '¥900',
+              badge: 'Filter',
+            },
+            {
+              name: 'The Hollow',
+              desc: 'Sumatra Mandheling, natural process. Dark, earthy, no brightness. That is not a flaw. That is the point.',
+              price: '¥880',
+              badge: 'Dark Roast',
+            },
+          ],
+        },
+        {
+          subcat: 'Espresso',
+          items: [
+            {
+              name: "The Warden's Blend",
+              desc: 'Our house doppio — Sumatran volcanic soil meets Colombian highlands. Rich, low-acid, a finish like old wood smoke. Served over a single piece of artisan ice.',
+              price: '¥920',
+              badge: 'House',
+            },
+            {
+              name: 'Quiet Latte',
+              desc: 'Oat milk, gently steamed, folded into a triple ristretto. No art on top. Just a warm surface that asks nothing of you.',
+              price: '¥790',
+              badge: 'Classic',
+            },
+            {
+              name: 'Half & Half',
+              desc: 'Equal parts espresso and black sesame milk. One half wakes. One half soothes. You decide which is which.',
+              price: '¥820',
+              badge: 'Specialty',
+            },
+            {
+              name: 'Cortado de Sombra',
+              desc: 'Two shots, equal parts whole milk, no sweetener. For those who want warmth but not too much of it.',
+              price: '¥760',
+              badge: '',
+            },
+          ],
+        },
+        {
+          subcat: 'Cold & Iced',
+          items: [
+            {
+              name: 'Amber Rain',
+              desc: 'Hojicha cold brew, roasted barley, a whisper of persimmon syrup. Best ordered when it is raining outside.',
+              price: '¥780',
+              badge: 'Seasonal',
+            },
+            {
+              name: 'Midnight Bloom',
+              desc: 'Cold brew steeped 24 hours, poured over shaved black sesame ice. The ice melts slowly. So does the bitterness.',
+              price: '¥850',
+              badge: 'Cold Brew',
+            },
+            {
+              name: 'The Still One',
+              desc: 'Flat white served cold, no ice. Just a glass of something the exact temperature of this room.',
+              price: '¥720',
+              badge: '',
+            },
+            {
+              name: 'Ink Tonic',
+              desc: 'Espresso, activated charcoal tonic water, yuzu peel. Poured table-side. Watch the cloud form and dissipate.',
+              price: '¥880',
+              badge: 'Signature',
+            },
+          ],
+        },
+      ],
+      food: [
+        {
+          subcat: 'Small Plates',
+          items: [
+            {
+              name: 'Smoked Mushroom Toast',
+              desc: 'Thick-cut sourdough, king oyster mushrooms slow-roasted with soy and sesame, soft egg, fried sage.',
+              price: '¥820',
+              badge: 'Kitchen',
+            },
+            {
+              name: 'Dashi Egg Custard',
+              desc: 'Chawanmushi with double-strength dashi, shiso oil, grilled shimeji, one slice of cured salmon.',
+              price: '¥740',
+              badge: 'Kitchen',
+            },
+            {
+              name: 'Nori & Sesame Onigiri',
+              desc: 'Two rice balls wrapped in charred nori, sesame and sea salt. Meant to be eaten in silence.',
+              price: '¥480',
+              badge: 'Light',
+            },
+            {
+              name: 'Ward Broth',
+              desc: 'Slow-simmered kombu and bonito dashi, served plain with toasted nori and pickled daikon.',
+              price: '¥490',
+              badge: 'Light',
+            },
+            {
+              name: 'Pickled Plum & Shiso',
+              desc: 'Served cold on slate with citrus salt and rice crackers. Best with whisky. Best with silence.',
+              price: '¥420',
+              badge: '',
+            },
+            {
+              name: 'Grilled Tofu, Miso Glaze',
+              desc: 'Silken tofu, aged red miso, sesame oil, shaved bonito and a single sliver of pickled ginger.',
+              price: '¥620',
+              badge: '',
+            },
+          ],
+        },
+        {
+          subcat: 'Sweets',
+          items: [
+            {
+              name: 'Matcha Midnight Cake',
+              desc: 'Three layers of ceremonial-grade matcha sponge, dark chocolate ganache, unsweetened cocoa dust. Served chilled.',
+              price: '¥680',
+              badge: 'Sweet',
+            },
+            {
+              name: 'Dark Chocolate Mochi',
+              desc: 'Handmade shell dusted in activated charcoal, filled with 70% Valrhona ganache and a pinch of sea salt.',
+              price: '¥520',
+              badge: 'Sweet',
+            },
+            {
+              name: 'Burned Honey Pudding',
+              desc: 'Steamed milk pudding, blackened honey drizzle, served in a ceramic cup that does not match anything else on the table. It never did.',
+              price: '¥560',
+              badge: 'Seasonal',
+            },
+            {
+              name: 'Black Sesame Warabi Mochi',
+              desc: 'Soft, almost translucent. Dark kinako coating, a pinch of crushed charcoal. Barely there until it is gone.',
+              price: '¥540',
+              badge: 'Sweet',
+            },
+          ],
+        },
+      ],
+      spirits: [
+        {
+          subcat: 'Whisky',
+          items: [
+            {
+              name: 'Yamazaki 12, Neat',
+              desc: 'Served in a hand-blown Edo glass. No ice, no water, no rush. One pour.',
+              price: '¥2,200',
+              badge: 'Japanese',
+            },
+            {
+              name: 'Hakushu 12',
+              desc: 'Peated, smoke-forward. Served in a wide glass so the aroma has room to arrive before you do. Pairs with rain.',
+              price: '¥2,400',
+              badge: 'Japanese',
+            },
+            {
+              name: 'Nikka From the Barrel',
+              desc: 'Cask strength, 51.4%. Bold enough to be honest. Served with a small glass of cold water on the side — your choice.',
+              price: '¥1,600',
+              badge: 'Blended',
+            },
+            {
+              name: 'Chichibu On The Way',
+              desc: 'A young whisky that tastes like somewhere it has not been yet. Limited allocation. Ask at the counter.',
+              price: '¥2,800',
+              badge: 'Single Malt',
+            },
+          ],
+        },
+        {
+          subcat: 'Cocktails',
+          items: [
+            {
+              name: 'The Closing Time',
+              desc: 'Nikka From the Barrel, cold-brew reduction, amaro, star anise. Stirred, not shaken. Only after 11pm.',
+              price: '¥1,650',
+              badge: 'House · Late',
+            },
+            {
+              name: 'The 20th Ward',
+              desc: 'Shochu, cold brew, black cardamom bitters, one ice sphere. Named for the place. Meant for those who know what that means.',
+              price: '¥1,400',
+              badge: 'House',
+            },
+            {
+              name: 'Ink & Citrus',
+              desc: 'Squid ink salt rim, yuzu sake, ginger tonic. Dark on the outside. Sharp where it counts.',
+              price: '¥1,300',
+              badge: '',
+            },
+            {
+              name: 'Rain Window',
+              desc: 'Umeshu, soda, black sesame bitters, a single shiso leaf. Served in the booth. Best when it is actually raining.',
+              price: '¥1,100',
+              badge: '',
+            },
+          ],
+        },
+        {
+          subcat: 'Wine & Sake',
+          items: [
+            {
+              name: 'Koshu, Château Mercian',
+              desc: 'A dry white from Yamanashi. Delicate. Faintly floral. One of two wines we carry — chosen by Yoshimura-san.',
+              price: '¥980',
+              badge: 'Wine',
+            },
+            {
+              name: 'Dassai 23',
+              desc: 'Junmai daiginjo, polished to 23%. Floral on the nose, clean on the palate. Served at cellar temperature.',
+              price: '¥1,800',
+              badge: 'Sake',
+            },
+            {
+              name: 'Plum Wine Reserve',
+              desc: 'Aged three years in cedar. Served warm in winter, chilled in summer. One small cup at a time.',
+              price: '¥860',
+              badge: 'Umeshu',
+            },
+            {
+              name: 'Ume & Black Pepper Tonic',
+              desc: 'Plum cordial, charcoal tonic, cracked pepper. Complex, alcohol-free, completely at home here.',
+              price: '¥720',
+              badge: 'Non-Alcoholic',
+            },
+          ],
+        },
+      ],
+      tonight: [
+        {
+          subcat: "The Owl's Selection",
+          items: [
+            {
+              name: "The Owl's Pour",
+              desc: 'A single-origin chosen each week by the manager. This week: washed Ethiopian Sidama, honey-sweet, stone fruit, impossibly clean. Ask at the counter for details.',
+              price: '¥1,200',
+              badge: 'Manager\'s Pick · Rotating',
+            },
+            {
+              name: 'The Proprietor\'s Reserve',
+              desc: 'Not listed anywhere else. We keep this for regular guests with particular needs. Speak to Yoshimura-san directly. He will know what you require.',
+              price: 'Ask',
+              badge: 'For Regulars',
+            },
+          ],
+        },
+        {
+          subcat: 'Seasonal Kitchen',
+          items: [
+            {
+              name: 'Rainfall Special',
+              desc: 'Whatever the kitchen decides when it rains. Ask your server. It changes. It is always the right thing.',
+              price: 'Market',
+              badge: 'When It Rains',
+            },
+            {
+              name: 'Chef\'s Broth, Tonight',
+              desc: 'One broth, prepared at dusk, finished before midnight. Ingredients written on the board at the back. If the board is gone, so is the broth.',
+              price: '¥680',
+              badge: 'Limited',
+            },
+            {
+              name: 'Cold Plate',
+              desc: 'Seasonal pickles, cured fish, charred rice crackers, and one thing we have not decided yet. Served on dark slate.',
+              price: '¥740',
+              badge: '',
+            },
+            {
+              name: 'Sweetness of the Evening',
+              desc: 'One dessert. Different every night. We do not describe it in advance. You either trust us or you do not.',
+              price: '¥580',
+              badge: 'Surprise',
+            },
+          ],
+        },
+        {
+          subcat: 'Collector\'s Corner',
+          items: [
+            {
+              name: 'Dram of the Season',
+              desc: 'One bottle allocated per season, poured at the counter only. Tonight: Karuizawa 1984, single cask. This will not be here next week.',
+              price: '¥4,800',
+              badge: 'One Bottle',
+            },
+            {
+              name: 'Late-Night Espresso, Double',
+              desc: 'After midnight only. No milk, no ice, no apology. For those still here when most people have already gone home.',
+              price: '¥600',
+              badge: 'After Midnight',
+            },
+          ],
+        },
+      ],
+    };
+
+    const reviews = [
+      {
+        text: 'I came here on a Tuesday after missing a train. I stayed until they closed. I have come back every rainy evening since.',
+        name: 'Kirishima R.',
+        loc: 'Shibuya, Tokyo',
+        initials: 'KR',
+      },
+      {
+        text: 'The coffee here does not taste like other coffee. It tastes like something you are trying to remember.',
+        name: 'Sato M.',
+        loc: '20th Ward',
+        initials: 'SM',
+      },
+      {
+        text: 'I asked for a quiet corner and the woman at the counter pointed without saying anything. She understood exactly.',
+        name: 'Park J.',
+        loc: 'Seoul, visiting',
+        initials: 'PJ',
+      },
+      {
+        text: 'I do not usually write reviews. I am writing this one because I feel the place deserves to exist without being changed by too much attention.',
+        name: 'Tanaka H.',
+        loc: 'Shinjuku',
+        initials: 'TH',
+      },
+      {
+        text: 'The Warden\'s Blend is not a cup of coffee. It is a conversation that you have with yourself.',
+        name: 'Yamamoto A.',
+        loc: 'Akihabara',
+        initials: 'YA',
+      },
+      {
+        text: 'Every element here is chosen. The music, the candlelight, the temperature of the room. Nothing is accidental.',
+        name: 'Chen W.',
+        loc: 'Hong Kong, visiting',
+        initials: 'CW',
+      },
+    ];
+
+    // ============================================================
+    //  NAV: scroll class + mobile toggle
+    // ============================================================
+    const nav        = document.getElementById('nav');
+    const navToggle  = document.getElementById('navToggle');
+    const mobileNav  = document.getElementById('mobileNav');
+    const mobileClose = document.getElementById('mobileClose');
+
+    window.addEventListener('scroll', () => {
+      nav.classList.toggle('scrolled', window.scrollY > 40);
+    }, { passive: true });
+
+    function openMobileNav() {
+      mobileNav.classList.add('open');
+      navToggle.setAttribute('aria-expanded', 'true');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeMobileNav() {
+      mobileNav.classList.remove('open');
+      navToggle.setAttribute('aria-expanded', 'false');
+      document.body.style.overflow = '';
+    }
+
+    navToggle.addEventListener('click', openMobileNav);
+    mobileClose.addEventListener('click', closeMobileNav);
+
+    document.querySelectorAll('.mobile-nav-link').forEach(link => {
+      link.addEventListener('click', closeMobileNav);
+    });
+
+    // ============================================================
+    //  MENU TABS
+    // ============================================================
+    const menuGrid = document.getElementById('menuGrid');
+
+    function renderMenu(category) {
+      const groups = menuData[category];
+      const isTonight = category === 'tonight';
+
+      menuGrid.innerHTML = groups.map(group => `
+        <div class="menu-subcategory">
+          <div class="menu-subcat-header">
+            <span class="menu-subcat-label">${group.subcat}</span>
+            <div class="menu-subcat-rule" aria-hidden="true"></div>
+          </div>
+          <div class="menu-entries">
+            ${group.items.map(item => `
+              <div class="menu-entry" role="article" aria-label="${item.name}">
+                <div class="menu-entry-top">
+                  <h3 class="menu-entry-name">${item.name}</h3>
+                  <span class="menu-entry-price">${item.price}</span>
+                </div>
+                <p class="menu-entry-desc">${item.desc}</p>
+                ${item.badge ? `<span class="menu-entry-badge">${item.badge}</span>` : ''}
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `).join('') + (isTonight ? `<p class="menu-note">Tonight's selections are written by hand each evening. Some things here will not be available tomorrow.</p>` : '');
+    }
+
+    document.querySelectorAll('.menu-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.menu-tab').forEach(t => {
+          t.classList.remove('active');
+          t.setAttribute('aria-selected', 'false');
+        });
+        tab.classList.add('active');
+        tab.setAttribute('aria-selected', 'true');
+        menuGrid.style.opacity = '0';
+        menuGrid.style.transform = 'translateY(10px)';
+        setTimeout(() => {
+          renderMenu(tab.dataset.tab);
+          menuGrid.style.transition = 'opacity 0.35s ease, transform 0.35s ease';
+          menuGrid.style.opacity = '1';
+          menuGrid.style.transform = 'translateY(0)';
+        }, 220);
+      });
+    });
+
+    renderMenu('coffee');
+
+    // ============================================================
+    //  TESTIMONIALS: infinite marquee
+    // ============================================================
+    function buildReviewCard(r) {
+      return `
+        <article class="testimonial-card">
+          <div class="testimonial-stars" aria-label="5 stars">
+            <span aria-hidden="true">★</span><span aria-hidden="true">★</span><span aria-hidden="true">★</span>
+            <span aria-hidden="true">★</span><span aria-hidden="true">★</span>
+          </div>
+          <blockquote class="testimonial-text">"${r.text}"</blockquote>
+          <div class="testimonial-author">
+            <div class="testimonial-avatar" aria-hidden="true">${r.initials}</div>
+            <div>
+              <div class="testimonial-name">${r.name}</div>
+              <div class="testimonial-loc">${r.loc}</div>
+            </div>
+          </div>
+        </article>
+      `;
+    }
+
+    const track = document.getElementById('reviewsTrack');
+    const doubled = [...reviews, ...reviews];
+    track.innerHTML = doubled.map(buildReviewCard).join('');
+
+    // ============================================================
+    //  INTERSECTION OBSERVER: reveal on scroll
+    // ============================================================
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          revealObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+
+    document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+    // ============================================================
+    //  NEWSLETTER FORM
+    // ============================================================
+    const ctaForm   = document.getElementById('ctaForm');
+    const submitBtn = document.getElementById('ctaSubmitBtn');
+
+    ctaForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const email = document.getElementById('emailInput').value.trim();
+      if (!email) return;
+      submitBtn.textContent = 'Noted ✓';
+      submitBtn.style.background = 'var(--amber-dim)';
+      submitBtn.disabled = true;
+      document.getElementById('emailInput').value = '';
+      setTimeout(() => {
+        submitBtn.textContent = 'Subscribe';
+        submitBtn.style.background = '';
+        submitBtn.disabled = false;
+      }, 3500);
+    });
+
+    // ============================================================
+    //  SCREEN-READER ONLY STYLE (injected to avoid style block bloat)
+    // ============================================================
+    const srStyle = document.createElement('style');
+    srStyle.textContent = '.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}';
+    document.head.appendChild(srStyle);
+
+    // ============================================================
+    //  SCROLL PROGRESS BAR
+    // ============================================================
+    const scrollFill = document.getElementById('scrollFill');
+    window.addEventListener('scroll', () => {
+      const pct = (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100;
+      scrollFill.style.height = Math.min(pct, 100) + '%';
+    }, { passive: true });
+
+  </script>
+
+  <!-- Kaneki homage — peering from the edge -->
+  <div class="kaneki-homage" aria-hidden="true" title="あなたも、人間になりたかったのか。">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 160" width="88" height="141">
+      <!-- mask outer shape -->
+      <path d="M 15,5 C 5,5 2,15 2,28 L 2,105 Q 2,124 12,134 L 18,122 L 26,137 L 34,122 L 42,135 L 50,124 Q 66,146 80,136 L 86,128 Q 98,116 98,102 L 98,30 Q 98,12 88,5 Q 70,0 50,2 Q 30,0 15,5 Z"
+            fill="none" stroke="#8a5c1e" stroke-width="1.6" stroke-linejoin="round"/>
+      <!-- top inner detail -->
+      <path d="M 15,5 Q 50,14 88,5" fill="none" stroke="#8a5c1e" stroke-width="0.7" opacity="0.5"/>
+      <!-- eye slit —— almond shape -->
+      <path d="M 22,48 Q 50,40 78,48 Q 50,57 22,48 Z"
+            fill="rgba(184,134,58,0.07)" stroke="#b8863a" stroke-width="1.2"/>
+      <!-- vertical centre crease -->
+      <line x1="50" y1="58" x2="50" y2="72" stroke="#8a5c1e" stroke-width="0.7" opacity="0.5"/>
+      <!-- stitched smile baseline -->
+      <path d="M 20,100 Q 50,122 80,100" fill="none" stroke="#8a5c1e" stroke-width="1.0"/>
+      <!-- suture marks along the smile -->
+      <line x1="26" y1="96"  x2="26" y2="105" stroke="#8a5c1e" stroke-width="1.2"/>
+      <line x1="33" y1="99"  x2="33" y2="108" stroke="#8a5c1e" stroke-width="1.2"/>
+      <line x1="40" y1="101" x2="40" y2="110" stroke="#8a5c1e" stroke-width="1.2"/>
+      <line x1="50" y1="103" x2="50" y2="112" stroke="#8a5c1e" stroke-width="1.2"/>
+      <line x1="60" y1="101" x2="60" y2="110" stroke="#8a5c1e" stroke-width="1.2"/>
+      <line x1="67" y1="99"  x2="67" y2="108" stroke="#8a5c1e" stroke-width="1.2"/>
+      <line x1="74" y1="96"  x2="74" y2="105" stroke="#8a5c1e" stroke-width="1.2"/>
+    </svg>
+  </div>
+
+</body>
+</html>
